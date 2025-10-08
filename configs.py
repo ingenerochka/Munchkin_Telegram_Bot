@@ -7,8 +7,6 @@ import logging
 
 # Данные бота
 token = os.environ.get('Munchkin_Telegram_Bot_Token')
-version = '0.2.0'
-data_update = '09.07.2025'
 
 # список ID администраторов
 #admins_list = [1803096758]
