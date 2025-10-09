@@ -10,6 +10,7 @@ from gtts import gTTS
 import databases
 import literary_texts
 import supports
+import victories
 
 
 def battle(user_id: int, user_name: str, user_level: int, bot: telebot.TeleBot, message: any):
@@ -62,28 +63,14 @@ def battle(user_id: int, user_name: str, user_level: int, bot: telebot.TeleBot, 
         bot.send_chat_action(message.chat.id, 'typing')
         if dice_value % 2 == 0:
             bot.send_message(message.chat.id, f'Выпало число {dice_value}. '
-                                              f'Поздравляем, судьба сегодня благосклонна к тебе, ты победил!')
+                                              f'Поздравляем, судьба сегодня благосклонна к тебе!')
             user_win = True
         else:
             bot.send_message(message.chat.id, f'Выпало число {dice_value}. '
-                                              f'Слышен злобный смех Аида. Ты проиграл!')
+                                              f'Слышен злобный смех Аида.')
             user_win = False
     else:
         user_win = False
-    if user_win:
-        bot.send_message(
-            chat_id=message.chat.id,
-            text=f'Ты победил!\n'
-                 f'В награду ты получаешь:\n'
-                 f'<b>{monster_data['trophy']}</b> сундуков с сокровищами\n'
-                 f'<b>{monster_data['scores']}</b> очков опыта',
-            parse_mode='HTML')
-    else:
-        bot.send_message(
-            chat_id=message.chat.id,
-            text=f'Ты проиграл!\n'
-                 f'{monster_data['escalation']}'
-        )
     logging.info('Произошел бой. Получена информация о результате')
     time.sleep(2)
     bot.send_chat_action(message.chat.id, 'typing')
@@ -91,7 +78,8 @@ def battle(user_id: int, user_name: str, user_level: int, bot: telebot.TeleBot, 
                                                     monster_data['description'], user_win)
     bot.send_message(
         chat_id=message.chat.id,
-        text=f'Вот как это запишут в летописях 📜\n'
+        text=f'Бой окончен!'
+             f'Вот как это запишут в летописях 📜\n'
              f'{battle_description}'
     )
     logging.info('Отправлено текстовое описание боя')
@@ -107,6 +95,29 @@ def battle(user_id: int, user_name: str, user_level: int, bot: telebot.TeleBot, 
     )
     battle_audio.close()
     logging.info('Отправлено голосовое описание боя')
+    if user_win:
+        bot.send_message(
+            chat_id=message.chat.id,
+            text=f'Ты победил!\n'
+                 f'В награду ты получаешь:\n'
+                 f'<b>{monster_data['trophy']}</b> сундуков с сокровищами\n'
+                 f'<b>+ {monster_data['scores']}</b> очков опыта',
+            parse_mode='HTML')
+        new_points, new_level = victories.get_points(user_id, monster_data['scores'])
+        if new_level != user_level:
+            bot.send_message(
+                chat_id=message.chat.id,
+                text=f'Ты получил новый уровень <b>{new_level}</b>',
+                parse_mode='HTML'
+            )
+    else:
+        bot.send_message(
+            chat_id=message.chat.id,
+            text=f'Ты проиграл!\n'
+                 f'{monster_data['escalation']}'
+        )
+
+
 
 # TODO: сделать механизм получения очков за победу над монстром - прибавлять к текущим очкам пользователя
 # TODO: сделать механизм проверки уровня после прибавления очков и уведомлять пользователя, если уровень повышен
