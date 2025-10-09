@@ -6,7 +6,6 @@ import logging
 import battles
 import configs
 import databases
-import literary_texts
 import supports
 import keyboards
 

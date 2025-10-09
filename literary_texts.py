@@ -2,7 +2,6 @@
 Модуль для создания текстов описания боев из шаблонов
 """
 
-
 import random
 
 
@@ -19,8 +18,8 @@ def create_text(hero_name: str, hero_weapon: str, monster_name: str, monster_des
     start_text = [
         f'Уверенный в себе герой {hero_name} c ноги выбивает дверь, но на него тут же прыгает {monster_name}. '
         f'Монстр - {monster_description}, и наносит удар первым. ',
-        f'Герой {hero_name} осторожно открывает скрипучую дверь, осматривается и видит ужасное чудовище - это {monster_name}. '
-        f'Герой бросается в атаку, но {monster_name} отражает ее. Монстр - {monster_description}. ',
+        f'Герой {hero_name} осторожно открывает скрипучую дверь, осматривается и видит ужасное чудовище - '
+        f'это {monster_name}. Герой бросается в атаку, но {monster_name} отражает ее. Монстр - {monster_description}. ',
         f'Наш доблестный герой {hero_name} без страха входит в подземелье и смотрит прямо в глаза монстру, '
         f'несмотря на то, что {monster_name} - {monster_description}. Начинается бой. '
 
@@ -51,8 +50,6 @@ def create_text(hero_name: str, hero_weapon: str, monster_name: str, monster_des
         ]
     full_text = random.choice(start_text) + random.choice(sequel_text) + random.choice(final_text)
     return full_text
-
-
 
 
 def test():

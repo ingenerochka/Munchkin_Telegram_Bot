@@ -29,6 +29,7 @@ def converter_user_data(message: types.Message) -> Dict[str, Any]:
     }
     return user_data
 
+
 def get_user_info(user_id: int) -> Dict[str, Any]:
     """
     Функция конвертирует кортеж с данными пользователя, полученными из БД, в словарь
@@ -48,6 +49,7 @@ def get_user_info(user_id: int) -> Dict[str, Any]:
     }
     return user_data
 
+
 def get_monster_info(monster: tuple) -> Dict[str, Any]:
     """
     Функция конвертирует кортеж с данными о монстре, полученными из БД, в словарь
@@ -66,6 +68,7 @@ def get_monster_info(monster: tuple) -> Dict[str, Any]:
     }
     return monster_data
 
+
 def get_thing_info(thing: tuple) -> Dict[str, Any]:
     """
     Функция конвертирует кортеж с данными о вещи в инвентаре пользователя, полученными из БД, в словарь
@@ -83,6 +86,7 @@ def get_thing_info(thing: tuple) -> Dict[str, Any]:
         'bonus': thing[7],
     }
     return thing_data
+
 
 def keys_checking(user_id: int):
     """

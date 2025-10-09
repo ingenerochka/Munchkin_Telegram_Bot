@@ -127,6 +127,7 @@ def get_user_inventory(user_id: int) -> list[int]:
     finally:
         conn.close()
 
+
 def change_thing_status(user_id: int, thing_id: int, command: str) -> None:
     """
     Функция меняет статус вещи со снято на надето или с надето на снято в зависимости от команды
@@ -170,6 +171,7 @@ def change_thing_status(user_id: int, thing_id: int, command: str) -> None:
         finally:
             conn.close()
 
+
 def open_door(user_id: int, number_of_keys: int) -> None:
     """
     Функция вычитает потраченные ключи из БД пользователя при открытии двери
@@ -189,6 +191,7 @@ def open_door(user_id: int, number_of_keys: int) -> None:
         logging.error(f'Ошибка при попытке пользователя ID {user_id} открыть дверь: {error}')
     finally:
         conn.close()
+
 
 def get_monster(user_level) -> list[int]:
     """
@@ -210,29 +213,3 @@ def get_monster(user_level) -> list[int]:
     finally:
         conn.close()
 
-
-#def check_thing_status(user_id: int, thing_id: int) -> None:
-    """
-    Функция проверяет, надета ли вещь из инвентаря на героя
-    :param user_id: Уникальный ID пользователя в Телеграм
-    :param thing_id: Уникальный ID вещи пользователя в БД Инвентаря
-    :return: None
-    
-    conn, cursor = connet_to_db(configs.DB_CONFIG['database_inventory'])
-    try:
-        cursor.execute(
-            query=f'SELECT type FROM inventory_{user_id} WHERE id=%s',
-            params=(thing_id,)
-        )
-        thing_type = cursor.fetchone()[0]
-        cursor.execute(
-            query=f'UPDATE inventory_{user_id} SET state_active=False type id=%s',
-            params=(thing_type,)
-        )
-        conn.commit()
-        logging.info(f'Пользователь ID {user_id} надел вещь {thing_id}')
-    except psycopg.Error as error:
-        logging.error(f'Ошибка при попытке пользователя ID {user_id} надеть вещь {thing_id}: {error}')
-    finally:
-        conn.close()
-    """
