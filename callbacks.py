@@ -134,7 +134,6 @@ def get_callback(bot, call, user_id) -> None:
             user_data = supports.get_user_info(user_id)
             databases.open_door(user_id, configs.keys_for_open_door)
             battles.battle(user_id, user_data['hero_name'], user_data['level'], bot, call.message)
-        # TODO : СДЕЛАНО сделать генерацию монстра и бой
         else:
             bot.answer_callback_query(
                 callback_query_id=call.id,

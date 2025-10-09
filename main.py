@@ -105,7 +105,7 @@ def run_bot() -> None:
     Функция запускает работу бота в бесконечном цикле
     :return: None
     """
-    logging.info(f'Бот запущен - v. {configs.version} от {configs.data_update}')
+    logging.info(f'Бот запущен')
     while True:
         try:
             bot.polling()

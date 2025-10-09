@@ -203,7 +203,6 @@ def get_monster(user_level) -> list[int]:
             params=(user_level,)
         )
         result = cursor.fetchone()
-        # TODO: СДЕЛАНО РАБОТАЕТ сделать дебаг функции, проверить правильность вывода, нужен ли бой
         logging.info(f'Выбран монстр для боя {result[1]}')
         return result
     except psycopg.Error as error:
