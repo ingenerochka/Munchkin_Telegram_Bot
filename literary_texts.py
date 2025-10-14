@@ -46,7 +46,7 @@ def create_text(hero_name: str, hero_weapon: str, monster_name: str, monster_des
             f'{monster_name} кусает героя за яйца. {hero_name} истошно вопит и убегает. Позор!',
             f'{monster_name} издает жуткий рев, раздающийся по подземелью, а {hero_name} валяется в крови рядом. '
             f'Бесславный конец.',
-            f'{hero_name} старался как мог, но не смог. {monster_name} яростно насилует его в углу подземелья.'
+            f'{hero_name} старался как мог, но не смог. {monster_name} яростно насилует героя в углу подземелья.'
         ]
     full_text = random.choice(start_text) + random.choice(sequel_text) + random.choice(final_text)
     return full_text

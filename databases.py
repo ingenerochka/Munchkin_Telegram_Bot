@@ -213,3 +213,44 @@ def get_monster(user_level) -> list[int]:
     finally:
         conn.close()
 
+
+def update_points(user_id: int, new_points: int) -> None:
+    """
+    Функция обновляет кол-во очков пользователя в БД пользователей
+    :param user_id: Уникальный ID пользователя в Телеграм
+    :param new_points: Новое значение очков пользователя
+    :return:
+    """
+    conn, cursor = connet_to_db(configs.DB_CONFIG['database_main'])
+    try:
+        cursor.execute(
+            query='UPDATE user_data SET points=%s WHERE user_id=%s',
+            params=(new_points, user_id)
+        )
+        conn.commit()
+        logging.info(f'Пользователь ID {user_id} получил очки')
+    except psycopg.Error as error:
+        logging.error(f'Ошибка при изменении кол-ва очков пользователя ID {user_id}: {error}')
+    finally:
+        conn.close()
+
+
+def update_level(user_id: int, new_level: int) -> None:
+    """
+    Функция обновляет уровень пользователя в БД пользователей
+    :param user_id: Уникальный ID пользователя в Телеграм
+    :param new_level: Новое значение уровня пользователя
+    :return:
+    """
+    conn, cursor = connet_to_db(configs.DB_CONFIG['database_main'])
+    try:
+        cursor.execute(
+            query='UPDATE user_data SET level=%s WHERE user_id=%s',
+            params=(new_level, user_id)
+        )
+        conn.commit()
+        logging.info(f'Пользователь ID {user_id} получил новый уровень')
+    except psycopg.Error as error:
+        logging.error(f'Ошибка при изменении уровня пользователя ID {user_id}: {error}')
+    finally:
+        conn.close()
