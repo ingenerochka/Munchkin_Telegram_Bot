@@ -52,7 +52,7 @@ def get_callback(bot, call, user_id) -> None:
         :return:
         """
         result_inventory = databases.get_user_inventory(user_id)
-
+        target_state = None
         # Определяем заголовок и нужное состояние в зависимости от колбека
         if call_data == 'equipment':
             bot.send_message(
