@@ -213,6 +213,25 @@ def get_monster(user_level) -> list[int]:
     finally:
         conn.close()
 
+def get_trophy(db_name) -> list[int]:
+    """
+    Функция выбора случайного сокровища из БД Вещей, Монет или Рас и классов
+    :param db_name: имя базы данных, откуда выбирать сокровище
+    :return: Строку с данными о сокровище
+    """
+    conn, cursor = connet_to_db(configs.DB_CONFIG['database_main'])
+    try:
+        cursor.execute(
+            query='SELECT * FROM %s ORDER BY RANDOM() LIMIT 1',
+            params=(db_name,)
+        )
+        result = cursor.fetchone()
+        logging.info(f'Выбрано сокровище {result[1]}')
+        return result
+    except psycopg.Error as error:
+        logging.error(f'Ошибка при выборе сокровища: {error}')
+    finally:
+        conn.close()
 
 def update_points(user_id: int, new_points: int) -> None:
     """
@@ -234,7 +253,6 @@ def update_points(user_id: int, new_points: int) -> None:
     finally:
         conn.close()
 
-
 def update_level(user_id: int, new_level: int) -> None:
     """
     Функция обновляет уровень пользователя в БД пользователей
@@ -252,5 +270,75 @@ def update_level(user_id: int, new_level: int) -> None:
         logging.info(f'Пользователь ID {user_id} получил новый уровень')
     except psycopg.Error as error:
         logging.error(f'Ошибка при изменении уровня пользователя ID {user_id}: {error}')
+    finally:
+        conn.close()
+
+def update_coins(user_id: int, new_coins: int) -> None:
+    """
+    Функция обновляет количество монет пользователя в БД пользователей
+    :param user_id: Уникальный ID пользователя в Телеграм
+    :param new_coins: Новое значение количества монет пользователя
+    :return:
+    """
+    conn, cursor = connet_to_db(configs.DB_CONFIG['database_main'])
+    try:
+        cursor.execute(
+            query='UPDATE user_data SET coins=%s WHERE user_id=%s',
+            params=(new_coins, user_id)
+        )
+        conn.commit()
+        logging.info(f'Пользователь ID {user_id} получил монеты')
+    except psycopg.Error as error:
+        logging.error(f'Ошибка при получении монет пользователем ID {user_id}: {error}')
+    finally:
+        conn.close()
+
+def update_race_class(user_id: int, type_race_class: str, new_race_class: int) -> None:
+    """
+    Функция добавляет новую расу или класс пользователя в БД пользователей
+    :param user_id: Уникальный ID пользователя в Телеграм
+    :param type_race_class: Тип, раса или класс
+    :param new_race_class: Новая раса или класс
+    :return:
+    """
+    conn, cursor = connet_to_db(configs.DB_CONFIG['database_main'])
+    try:
+        cursor.execute(
+            query='UPDATE user_data SET %s=%s WHERE user_id=%s',
+            params=(type_race_class, new_race_class, user_id)
+        )
+        conn.commit()
+        logging.info(f'Пользователь ID {user_id} получил расу/класс {new_race_class}')
+    except psycopg.Error as error:
+        logging.error(f'Ошибка при получении расы/класса {new_race_class} пользователем ID {user_id}: {error}')
+    finally:
+        conn.close()
+
+def update_inventory(user_id: int, new_thing: list[int]) -> None:
+    """
+    Функция добавляет новую вещь в БД инвентаря пользователя
+    :param user_id: Уникальный ID пользователя в Телеграм
+    :param new_thing: Строка с данными о вещи
+    :return:
+    """
+    thing_id = new_thing[0]
+    name = new_thing[1]
+    thing_type = new_thing[2]
+    description = new_thing[3]
+    conditions = new_thing[4]
+    price = new_thing[5]
+    bonus = new_thing[6]
+    conn, cursor = connet_to_db(configs.DB_CONFIG['database_main'])
+    try:
+        cursor.execute(
+            query=f'INSERT INTO inventory_{user_id} ('
+                  'id, name, type, description, bonus, conditions, price, state_active);'
+                  'VALUES (%s, %s, %s, %s, %s, %s, %s, %s) ',
+            params=(thing_id, name, thing_type, description, bonus, conditions, price, False)
+        )
+        conn.commit()
+        logging.info(f'Пользователь ID {user_id} получил вещь {name}')
+    except psycopg.Error as error:
+        logging.error(f'Ошибка при получении вещи {name} пользователем ID {user_id}: {error}')
     finally:
         conn.close()

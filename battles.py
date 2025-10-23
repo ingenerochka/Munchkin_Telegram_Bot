@@ -82,20 +82,20 @@ def battle(user_id: int, user_name: str, user_level: int, bot: telebot.TeleBot, 
         text=f'Бой окончен!\n'
              f'Вот как это запишут в летописях 📜\n'
              f'{battle_description}',
-        #parse_mode='HTML'
+        parse_mode='HTML'
     )
     logging.info('Отправлено текстовое описание боя')
-    battle_audio = gTTS(battle_description, lang='ru')
-    battle_audio.save('audios/battle_audio.mp3')
-    battle_audio = open(r'audios/battle_audio.mp3', 'rb')
-    time.sleep(2)
-    bot.send_chat_action(message.chat.id, 'upload_audio')
-    bot.send_audio(
-        chat_id=message.chat.id,
-        audio=battle_audio,
-        caption='А вот как споют об этом барды 🪕'
-    )
-    battle_audio.close()
+    #battle_audio = gTTS(battle_description, lang='ru')
+    #battle_audio.save('audios/battle_audio.mp3')
+    #battle_audio = open(r'audios/battle_audio.mp3', 'rb')
+    #time.sleep(2)
+    #bot.send_chat_action(message.chat.id, 'upload_audio')
+    #bot.send_audio(
+        #chat_id=message.chat.id,
+        #audio=battle_audio,
+        #caption='А вот как споют об этом барды 🪕'
+    #)
+    #battle_audio.close()
     logging.info('Отправлено голосовое описание боя')
     if user_win:
         bot.send_message(
@@ -116,6 +116,7 @@ def battle(user_id: int, user_name: str, user_level: int, bot: telebot.TeleBot, 
             )
             bot.set_message_reaction(message.chat.id, message_id=message.id,
                                      reaction=[types.ReactionTypeEmoji("🎉")], is_big=True)
+        victories.get_trophies(user_id, monster_data['trophy'], bot, message)
 
     else:
         bot.send_message(
@@ -153,5 +154,3 @@ def battle(user_id: int, user_name: str, user_level: int, bot: telebot.TeleBot, 
 # TODO: сделать прибавление попавшегося сокровища к монетам пользователя, если это монеты
 # TODO: сделать механизм присвоения герою расы или класса, если они попались в сокровищах (если уже есть,
 #  прошлые меняются на новые, старые затираются)
-# TODO: заполнить файл read.md
-# TODO: в литерали текст добавить выделение жирным, смайликами и прочими красивостями
