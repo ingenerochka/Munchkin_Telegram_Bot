@@ -247,7 +247,7 @@ def update_points(user_id: int, new_points: int) -> None:
             params=(new_points, user_id)
         )
         conn.commit()
-        logging.info(f'Пользователь ID {user_id} получил очки')
+        logging.info(f'Пользователь ID {user_id} получил/потерял очки')
     except psycopg.Error as error:
         logging.error(f'Ошибка при изменении кол-ва очков пользователя ID {user_id}: {error}')
     finally:
@@ -268,7 +268,7 @@ def update_level(user_id: int, new_level: int) -> None:
             params=(new_level, user_id)
         )
         conn.commit()
-        logging.info(f'Пользователь ID {user_id} получил новый уровень')
+        logging.info(f'Пользователь ID {user_id} получил/потерял уровень')
     except psycopg.Error as error:
         logging.error(f'Ошибка при изменении уровня пользователя ID {user_id}: {error}')
     finally:
@@ -289,7 +289,7 @@ def update_coins(user_id: int, new_coins: int) -> None:
             params=(new_coins, user_id)
         )
         conn.commit()
-        logging.info(f'Пользователь ID {user_id} получил монеты')
+        logging.info(f'Пользователь ID {user_id} получил/потерял монеты')
     except psycopg.Error as error:
         logging.error(f'Ошибка при получении монет пользователем ID {user_id}: {error}')
     finally:
@@ -318,7 +318,7 @@ def update_race_class(user_id: int, type_race_class: str, new_race_class: int) -
         conn.close()
 
 
-def update_inventory(user_id: int, new_thing: list[int]) -> None:
+def add_thing(user_id: int, new_thing: list[int]) -> None:
     """
     Функция добавляет новую вещь в БД инвентаря пользователя
     :param user_id: Уникальный ID пользователя в Телеграм
@@ -344,5 +344,28 @@ def update_inventory(user_id: int, new_thing: list[int]) -> None:
         logging.info(f'Пользователь ID {user_id} получил вещь {name}')
     except psycopg.Error as error:
         logging.error(f'Ошибка при получении вещи {name} пользователем ID {user_id}: {error}')
+    finally:
+        conn.close()
+
+
+def lose_thing(user_id: int) -> int:
+    """
+    Функция удаляет случайную надетую вещь из БД инвентаря пользователя
+    :param user_id: Уникальный ID пользователя в Телеграм
+    :return:
+    """
+    conn, cursor = connet_to_db(configs.DB_CONFIG['database_inventory'])
+    try:
+        cursor.execute(
+            query=f'DELETE FROM inventory_{user_id} WHERE id = '
+                  f'(SELECT id FROM inventory_{user_id} WHERE state_active=True ORDER BY RANDOM() LIMIT 1)'
+                  'RETURNING name',
+        )
+        result = cursor.fetchone()
+        conn.commit()
+        logging.info(f'Пользователь ID {user_id} потерял вещь')
+        return result[0]
+    except psycopg.Error as error:
+        logging.error(f'Ошибка при удалении вещи у пользователя ID {user_id}: {error}')
     finally:
         conn.close()

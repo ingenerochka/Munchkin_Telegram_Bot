@@ -96,7 +96,7 @@ def battle(user_id: int, user_name: str, user_level: int, bot: telebot.TeleBot, 
         #caption='А вот как споют об этом барды 🪕'
     #)
     #battle_audio.close()
-    logging.info('Отправлено голосовое описание боя')
+    #logging.info('Отправлено голосовое описание боя')
     if user_win:
         bot.send_message(
             chat_id=message.chat.id,
@@ -105,15 +105,7 @@ def battle(user_id: int, user_name: str, user_level: int, bot: telebot.TeleBot, 
                  f'<b>{monster_data['trophy']}</b> сундуков с сокровищами\n'
                  f'<b>+ {monster_data['scores']}</b> очков опыта',
             parse_mode='HTML')
-        new_points, new_level = victories.get_points(user_id, monster_data['scores'])
-        databases.update_points(user_id, new_points)
-        if new_level != user_level:
-            databases.update_level(user_id, new_level)
-            bot.send_message(
-                chat_id=message.chat.id,
-                text=f'Ты получил новый уровень <b>{new_level}</b> 🎉',
-                parse_mode='HTML'
-            )
+        victories.get_points(user_id, monster_data['scores'], bot, message)
         victories.get_trophies(user_id, monster_data['trophy'], bot, message)
 
     else:
@@ -136,19 +128,8 @@ def battle(user_id: int, user_name: str, user_level: int, bot: telebot.TeleBot, 
             bot.send_message(message.chat.id, f'Выпало число {dice_value}. '
                                               f'Поздравляем, тебе удалось сбежать от монстра!\n'
                                               'Ты не получаешь эскалации, но покидаешь Подземелье с пустыми руками')
-            user_escape = True
         else:
             bot.send_message(message.chat.id, f'Выпало число {dice_value}. '
                                               f'О, нет! Монстр догоняет тебя, схватив за пятку!\n'
                                               f'Ты получаешь эскалацию: {monster_data['escalation']}')
-            user_escape = False
-
-
-
-
-
-# TODO: сделать механизм выбора случайного сундука из бд сокровищ
-# TODO: сделать механизм добавления попавшегося сокровища в инвентарь, если это шмотка
-# TODO: сделать прибавление попавшегося сокровища к монетам пользователя, если это монеты
-# TODO: сделать механизм присвоения герою расы или класса, если они попались в сокровищах (если уже есть,
-#  прошлые меняются на новые, старые затираются)
+            victories.get_escalation(user_id, monster_data['escalation_id'], monster_data['escalation'], bot, message)

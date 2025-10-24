@@ -160,4 +160,4 @@ def get_callback(bot, call, user_id) -> None:
                 text=f'Вещь снята!',
                 show_alert=True
             )
-
+# TODO: починить Инвентарь, не выводит вещи
