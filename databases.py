@@ -213,6 +213,7 @@ def get_monster(user_level) -> list[int]:
     finally:
         conn.close()
 
+
 def get_trophy(db_name) -> list[int]:
     """
     Функция выбора случайного сокровища из БД Вещей, Монет или Рас и классов
@@ -222,9 +223,7 @@ def get_trophy(db_name) -> list[int]:
     conn, cursor = connet_to_db(configs.DB_CONFIG['database_main'])
     try:
         cursor.execute(
-            query='SELECT * FROM %s ORDER BY RANDOM() LIMIT 1',
-            params=(db_name,)
-        )
+            query=f'SELECT * FROM {db_name} ORDER BY RANDOM() LIMIT 1')
         result = cursor.fetchone()
         logging.info(f'Выбрано сокровище {result[1]}')
         return result
@@ -232,6 +231,7 @@ def get_trophy(db_name) -> list[int]:
         logging.error(f'Ошибка при выборе сокровища: {error}')
     finally:
         conn.close()
+
 
 def update_points(user_id: int, new_points: int) -> None:
     """
@@ -253,6 +253,7 @@ def update_points(user_id: int, new_points: int) -> None:
     finally:
         conn.close()
 
+
 def update_level(user_id: int, new_level: int) -> None:
     """
     Функция обновляет уровень пользователя в БД пользователей
@@ -272,6 +273,7 @@ def update_level(user_id: int, new_level: int) -> None:
         logging.error(f'Ошибка при изменении уровня пользователя ID {user_id}: {error}')
     finally:
         conn.close()
+
 
 def update_coins(user_id: int, new_coins: int) -> None:
     """
@@ -293,6 +295,7 @@ def update_coins(user_id: int, new_coins: int) -> None:
     finally:
         conn.close()
 
+
 def update_race_class(user_id: int, type_race_class: str, new_race_class: int) -> None:
     """
     Функция добавляет новую расу или класс пользователя в БД пользователей
@@ -304,8 +307,8 @@ def update_race_class(user_id: int, type_race_class: str, new_race_class: int) -
     conn, cursor = connet_to_db(configs.DB_CONFIG['database_main'])
     try:
         cursor.execute(
-            query='UPDATE user_data SET %s=%s WHERE user_id=%s',
-            params=(type_race_class, new_race_class, user_id)
+            query=f'UPDATE user_data SET {type_race_class}=%s WHERE user_id=%s',
+            params=(new_race_class, user_id)
         )
         conn.commit()
         logging.info(f'Пользователь ID {user_id} получил расу/класс {new_race_class}')
@@ -313,6 +316,7 @@ def update_race_class(user_id: int, type_race_class: str, new_race_class: int) -
         logging.error(f'Ошибка при получении расы/класса {new_race_class} пользователем ID {user_id}: {error}')
     finally:
         conn.close()
+
 
 def update_inventory(user_id: int, new_thing: list[int]) -> None:
     """
@@ -328,12 +332,12 @@ def update_inventory(user_id: int, new_thing: list[int]) -> None:
     conditions = new_thing[4]
     price = new_thing[5]
     bonus = new_thing[6]
-    conn, cursor = connet_to_db(configs.DB_CONFIG['database_main'])
+    conn, cursor = connet_to_db(configs.DB_CONFIG['database_inventory'])
     try:
         cursor.execute(
-            query=f'INSERT INTO inventory_{user_id} ('
-                  'id, name, type, description, bonus, conditions, price, state_active);'
-                  'VALUES (%s, %s, %s, %s, %s, %s, %s, %s) ',
+            query=f'INSERT INTO inventory_{user_id} '
+                  '(id, name, type, description, bonus, conditions, price, state_active) '
+                  'VALUES (%s, %s, %s, %s, %s, %s, %s, %s);',
             params=(thing_id, name, thing_type, description, bonus, conditions, price, False)
         )
         conn.commit()

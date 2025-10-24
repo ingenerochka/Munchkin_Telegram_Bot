@@ -68,7 +68,7 @@ def get_callback(bot, call, user_id) -> None:
             target_state = False  # Показываем только ненадетые вещи
 
         for row_result_inventory in result_inventory:
-            thing_id_for_call, thing_name, thing_type, description, bonus, state_active = row_result_inventory
+            thing_id_for_call, thing_name, thing_type, description, conditions, price, bonus, state_active = row_result_inventory
 
             # Пропускаем предметы, которые не соответствуют нужному состоянию
             if state_active != target_state:

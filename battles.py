@@ -111,11 +111,9 @@ def battle(user_id: int, user_name: str, user_level: int, bot: telebot.TeleBot, 
             databases.update_level(user_id, new_level)
             bot.send_message(
                 chat_id=message.chat.id,
-                text=f'Ты получил новый уровень <b>{new_level}</b>',
+                text=f'Ты получил новый уровень <b>{new_level}</b> 🎉',
                 parse_mode='HTML'
             )
-            bot.set_message_reaction(message.chat.id, message_id=message.id,
-                                     reaction=[types.ReactionTypeEmoji("🎉")], is_big=True)
         victories.get_trophies(user_id, monster_data['trophy'], bot, message)
 
     else:

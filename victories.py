@@ -4,7 +4,6 @@
 import random
 
 import telebot
-from telebot import types
 
 import databases
 import supports
@@ -30,17 +29,17 @@ def get_points(user_id: int, scores: int) -> int:
     return new_points, new_level
 
 
-def get_trophies(user_id: int, trophy: int, bot: telebot.TeleBot, message: any):
+def get_trophies(user_id: int, trophy_number: int, bot: telebot.TeleBot, message: any):
     """
     Функция выбирает тип сокровища, которое получит пользователь и добавляет его в профиль пользователя
     :param user_id: Уникальный ID пользователя в Телеграм
-    :param trophy: Количество получаемых сокровищ
+    :param trophy_number: Количество получаемых сокровищ
     :param bot: Объект сессии Телеграм
     :param message: Блок с данными о сообщении
     :return:
     """
     user_data = supports.get_user_info(user_id)
-    while trophy != 0:
+    while trophy_number != 0:
         db_name = random.choice(['coins_data', 'races_classes_data', 'things_data'])
         trophy = databases.get_trophy(db_name)
         if db_name == 'coins_data':
@@ -49,7 +48,7 @@ def get_trophies(user_id: int, trophy: int, bot: telebot.TeleBot, message: any):
             databases.update_coins(user_id, new_coins)
             bot.send_message(
                 chat_id=message.chat.id,
-                text=f'Ты открыл сундук, а там {trophy[1]} '
+                text=f'Ты открыл сундук, а там <b>{trophy[1]}</b>\n'
                      f'Ты получаешь <b>{trophy[2]}</b> монет 🪙',
                 parse_mode='HTML'
             )
@@ -64,13 +63,14 @@ def get_trophies(user_id: int, trophy: int, bot: telebot.TeleBot, message: any):
                 parse_mode='HTML'
             )
         else:
-            databases.update_inventory(trophy)
+            databases.update_inventory(user_id, trophy)
             bot.send_message(
                 chat_id=message.chat.id,
                 text=f'Ты получил вещь <b>{trophy[1]}</b>\n'
                      f'{trophy[3]}',
                 parse_mode='HTML'
             )
+        trophy_number -= 1
 
 
 
